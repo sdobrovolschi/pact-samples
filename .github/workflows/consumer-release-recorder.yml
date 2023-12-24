@@ -1,0 +1,28 @@
+name: consumer release recorder
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Toggle version'
+        required: true
+        type: string
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+#     https://docs.pact.io/implementation_guides/feature_toggles#marking-a-version-as-deployed-or-released-to-an-environment
+    - name: Record Release
+      uses: addnab/docker-run-action@v3
+      with:
+        image: pactfoundation/pact-cli:0.56.0.6
+        run: |
+          pact-broker record-release \
+          --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
+          --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
+          --pacticipant consumer \
+          --version ${{ inputs.version }} \
+          --environment production

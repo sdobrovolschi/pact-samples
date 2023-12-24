@@ -1,0 +1,28 @@
+name: consumer feature rollout checker
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Toggle version'
+        required: true
+        type: string
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+#     https://docs.pact.io/implementation_guides/feature_toggles#checking-if-you-can-turn-on-a-feature-toggle-in-an-environment
+    - name: Check Compatibility
+      uses: addnab/docker-run-action@v3
+      with:
+        image: pactfoundation/pact-cli:0.56.0.6
+        run: |
+          pact-broker can-i-deploy \
+          --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
+          --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
+          --pacticipant consumer \
+          --version ${{ inputs.version }} \
+          --to-environment production

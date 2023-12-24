@@ -1,0 +1,34 @@
+name: provider deployment
+
+on: workflow_dispatch
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: benjlevesque/short-sha@v2.2
+    - name: Check Compatibility
+      uses: addnab/docker-run-action@v3
+      with:
+        image: pactfoundation/pact-cli:0.56.0.6
+        run: |
+          pact-broker can-i-deploy \
+          --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
+          --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
+          --pacticipant provider \
+          --version ${{ env.SHA }} \
+          --to-environment production
+#     https://docs.pact.io/pact_broker/recording_deployments_and_releases#recording-deployments
+    - name: Record Deployment
+      uses: addnab/docker-run-action@v3
+      with:
+        image: pactfoundation/pact-cli:0.56.0.6
+        run: |
+          pact-broker record-deployment \
+          --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
+          --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
+          --pacticipant provider \
+          --version ${{ env.SHA }} \
+          --environment production
