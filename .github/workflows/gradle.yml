@@ -21,4 +21,4 @@ jobs:
     - name: Publish Pacts
       run: ./consumer/gradlew pactPublish -p ./consumer
     - name: Build Provider
-      run: ./provider/mvnw clean test -f ./provider
+      run: ./provider/mvnw clean test -f ./provider -Dpact.verifier.publishResults=true -Dpact.provider.branchName=main -Dpact.provider.version=0.0.1
