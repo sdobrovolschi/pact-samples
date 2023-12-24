@@ -16,7 +16,9 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Build with Gradle
+    - name: Build Consumer
       run: ./consumer/gradlew clean build -p ./consumer
     - name: Publish Pacts
       run: ./consumer/gradlew pactPublish -p ./consumer
+    - name: Build Provider
+      run: ./provider/mvnw clean test -f ./provider
