@@ -1,0 +1,15 @@
+name: Publish Pacts
+inputs:
+  pacts-location:
+    required: true
+  consumer-version:
+    required: true
+runs:
+  using: docker
+  image: pactfoundation/pact-cli:0.56.0.6
+  args:
+    - publish
+    - ${{ inputs.pacts-location }}
+    - --consumer-app-version ${{ inputs.consumer-version }}
+    - --tag-with-git-branch
+    
