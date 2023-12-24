@@ -3,4 +3,5 @@ pactbroker:
   auth:
     token: 4CJtjKMtAFlAbj2sqawKpQ
   consumerversionselectors:
-    tags: main
+    mainBranch: true
+    deployedOrReleased: true
