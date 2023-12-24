@@ -21,4 +21,4 @@ jobs:
     - name: Publish Pacts
       run: ./consumer/gradlew pactPublish -p ./consumer -Dpact.publish.consumer.branchName=${{ github.ref_name }} -Dpact.publish.consumer.version=${{ github.sha }}
     - name: Build Provider
-      run: ./provider/mvnw clean test -f ./provider -Dpact.verifier.publishResults=true -Dpact.provider.branchName=main -Dpact.provider.version=0.0.1
+      run: ./provider/mvnw clean test -f ./provider -Dpact.verifier.publishResults=true -Dpactbroker.providerBranch=${{ github.ref_name }} -Dpact.provider.version=${{ github.sha }}
