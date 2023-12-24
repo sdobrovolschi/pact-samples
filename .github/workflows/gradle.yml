@@ -18,3 +18,5 @@ jobs:
         distribution: 'temurin'
     - name: Build with Gradle
       run: ./consumer/gradlew clean build -p ./consumer
+    - name: Publish Pacts
+      run: ./consumer/gradlew pactPublish -p ./consumer
