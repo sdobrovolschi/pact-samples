@@ -19,7 +19,6 @@ jobs:
     - name: Build Consumer
       run: ./consumer/gradlew clean build -p ./consumer
     - name: Publish Pacts
-      uses: benjlevesque/short-sha@v2.2
-      run: ./consumer/gradlew pactPublish -p ./consumer -Dpact.publish.consumer.branchName=${{ github.ref_name }} -Dpact.publish.consumer.version=${{ env.SHA }}
+      run: ./consumer/gradlew pactPublish -p ./consumer -Dpact.publish.consumer.branchName=${{ github.ref_name }} -Dpact.publish.consumer.version=${{ github.sha }}
     - name: Build Provider
       run: ./provider/mvnw clean test -f ./provider -Dpact.verifier.publishResults=true -Dpact.provider.branchName=main -Dpact.provider.version=0.0.1
