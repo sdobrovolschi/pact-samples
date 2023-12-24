@@ -5,9 +5,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
+    container:
+      image: pactfoundation/pact-cli:0.56.0.6
+      env:
+        PACT_BROKER_BASE_URL: https://stastest.pactflow.io/
+        PACT_BROKER_TOKEN: 4CJtjKMtAFlAbj2sqawKpQ
 
     steps:
     - uses: actions/checkout@v3
@@ -19,6 +24,7 @@ jobs:
     - name: Build Consumer
       run: ./consumer/gradlew clean build -p ./consumer
     - name: Publish Pacts
-      run: ./consumer/gradlew pactPublish -p ./consumer -Dpact.publish.consumer.branchName=${{ github.ref_name }} -Dpact.publish.consumer.version=${{ github.sha }}
+      # run: ./consumer/gradlew pactPublish -p ./consumer -Dpact.publish.consumer.branchName=${{ github.ref_name }} -Dpact.publish.consumer.version=${{ github.sha }}
+      run: publish ${PWD}/consumer/build/pacts --consumer-app-version ${{ github.sha }} --tag-with-git-branch
     - name: Build Provider
       run: ./provider/mvnw clean test -f ./provider -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ github.ref_name }} -Dpact.provider.version=${{ github.sha }}
