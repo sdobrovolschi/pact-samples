@@ -26,7 +26,7 @@ jobs:
     - name: Publish Pacts
       # run: ./consumer/gradlew pactPublish -p ./consumer -Dpact.publish.consumer.branchName=${{ github.ref_name }} -Dpact.publish.consumer.version=${{ github.sha }}
       # run: publish ${PWD}/consumer/build/pacts --consumer-app-version ${{ github.sha }} --tag-with-git-branch
-      uses: actions/publish-pacts@v2
+      uses: ./.github/actions/publish-pacts
       with:
         pacts-location: ${PWD}/consumer/build/pacts
         consumer-version: ${{ github.sha }}
