@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@PactBroker(enablePendingPacts = "true", providerTags = "main")
+@PactBroker(enablePendingPacts = "true")
 @Provider("provider")
 @IgnoreNoPactsToVerify
 @VerificationReports(value = {"console", "json"}, reportDir = "target/pact/reports")
