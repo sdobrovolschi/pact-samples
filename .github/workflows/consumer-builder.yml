@@ -22,6 +22,7 @@ jobs:
         distribution: 'temurin'
     - name: Test base
       run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=base
+#     https://docs.pact.io/pact_nirvana/notes_1
     - name: Register Consumer in the Pact Broker
       uses: addnab/docker-run-action@v3
       with:
@@ -44,15 +45,7 @@ jobs:
             --consumer-app-version ${{ github.sha }} \
             --branch ${{ github.ref_name }}
           fi
-#          else
-#            pact-broker create-or-update-pacticipant \
-#            --name consumer
-#            pact-broker create-version-tag \
-#            --pacticipant consumer \
-#            --version ${{ github.sha }} \
-#            --auto-create-version
-#          fi
-    - name: Test feature
+    - name: Test feature.customer
       run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=feature.customer
     - name: Publish Pacts
       uses: addnab/docker-run-action@v3
@@ -63,10 +56,6 @@ jobs:
           pact-broker publish ${{ github.workspace }}/consumer/build/pacts \
           --consumer-app-version ${{ github.sha }}+feature.customer \
           --branch ${{ github.ref_name }}
-#          pact-broker create-version-tag \
-#          --pacticipant=consumer \
-#          --version=${{ github.sha }} \
-#          --auto-create-version
     - name: Verify Pacts
       uses: actions/github-script@v7
       with:
