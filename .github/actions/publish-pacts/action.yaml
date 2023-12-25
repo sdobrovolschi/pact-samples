@@ -7,6 +7,9 @@ inputs:
 runs:
   using: docker
   image: pactfoundation/pact-cli:0.56.0.6
+  env:
+    PACT_BROKER_BASE_URL: https://stastest.pactflow.io/
+    PACT_BROKER_TOKEN: 4CJtjKMtAFlAbj2sqawKpQ
   args:
     - publish
     - ${{ inputs.pacts-location }}
