@@ -2,7 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.0'
 	id 'io.spring.dependency-management' version '1.1.4'
-	id 'au.com.dius.pact' version '4.6.4'
 }
 
 group = 'com.example.pact'
@@ -22,14 +21,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation ('au.com.dius.pact.consumer:junit5:4.6.4') {
 		exclude group: 'org.json'
-	}
-}
-
-pact {
-	publish {
-		pactBrokerUrl = 'https://stastest.pactflow.io/'
-		pactBrokerToken = '4CJtjKMtAFlAbj2sqawKpQ'
-		consumerBranch = 'main'
 	}
 }
 
