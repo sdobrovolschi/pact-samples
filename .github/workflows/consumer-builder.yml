@@ -20,8 +20,21 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Test Consumer
-      run: ./consumer/gradlew clean test -p ./consumer
+    - name: Test base
+      run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=base
+    - name: Publish Pacts
+      uses: addnab/docker-run-action@v3
+      with:
+        image: pactfoundation/pact-cli:0.56.0.6
+        options: -v ${{ github.workspace }}:${{ github.workspace }} -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
+        run: |
+          if [-f ${{ github.workspace }}/consumer/build/pacts]; then
+            pact-broker publish ${{ github.workspace }}/consumer/build/pacts \
+            --consumer-app-version ${{ github.sha }} \
+            --branch ${{ github.ref_name }}
+          fi
+    - name: Test feature
+      run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=feature.customer
     - name: Publish Pacts
       uses: addnab/docker-run-action@v3
       with:
@@ -29,7 +42,7 @@ jobs:
         options: -v ${{ github.workspace }}:${{ github.workspace }} -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
         run: |
           pact-broker publish ${{ github.workspace }}/consumer/build/pacts \
-          --consumer-app-version ${{ github.sha }} \
+          --consumer-app-version ${{ github.sha }}+feature.customer \
           --branch ${{ github.ref_name }}
     - name: Verify Pacts
       uses: actions/github-script@v7
