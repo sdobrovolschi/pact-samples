@@ -56,7 +56,7 @@ class ConsumerApplicationTests {
     @Test
     @PactTestFor(pactMethod = "customer")
     void findingKnown() {
-		var body = client.get().uri("/customers/1")
+        var body = client.get().uri("/customers/1")
                 .retrieve()
                 .body(String.class);
 

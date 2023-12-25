@@ -20,40 +20,43 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Test base
-      run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=base
 #     https://docs.pact.io/pact_nirvana/notes_1
     - name: Register Consumer in the Pact Broker
       uses: addnab/docker-run-action@v3
       with:
         image: pactfoundation/pact-cli:0.56.0.6
-        options: -v ${{ github.workspace }}:${{ github.workspace }} -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
         run: |
           pact-broker create-or-update-version \
+          --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
+          --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
           --pacticipant consumer \
           --version ${{ github.sha }} \
           --branch ${{ github.ref_name }}
-    - name: Publish Pacts
-      uses: addnab/docker-run-action@v3
-      with:
-        image: pactfoundation/pact-cli:0.56.0.6
-        options: -v ${{ github.workspace }}:${{ github.workspace }} -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
-        run: |
-          if [-f ${{ github.workspace }}/consumer/build/pacts]
-          then
-            pact-broker publish ${{ github.workspace }}/consumer/build/pacts \
-            --consumer-app-version ${{ github.sha }} \
-            --branch ${{ github.ref_name }}
-          fi
+#     https://docs.pact.io/implementation_guides/feature_toggles#running-consumer-tests-and-publishing-pacts
+#    - name: Test base
+#      run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=base
+#    - name: Publish Pacts
+#      uses: addnab/docker-run-action@v3
+#      with:
+#        image: pactfoundation/pact-cli:0.56.0.6
+#        options: -v ${{ github.workspace }}:${{ github.workspace }}
+#        run: |
+#          pact-broker publish ${{ github.workspace }}/consumer/build/pacts \
+#          --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
+#          --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
+#          --consumer-app-version ${{ github.sha }} \
+#          --branch ${{ github.ref_name }}
     - name: Test feature.customer
       run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=feature.customer
     - name: Publish Pacts
       uses: addnab/docker-run-action@v3
       with:
         image: pactfoundation/pact-cli:0.56.0.6
-        options: -v ${{ github.workspace }}:${{ github.workspace }} -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
+        options: -v ${{ github.workspace }}:${{ github.workspace }}
         run: |
           pact-broker publish ${{ github.workspace }}/consumer/build/pacts \
+          --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
+          --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
           --consumer-app-version ${{ github.sha }}+feature.customer \
           --branch ${{ github.ref_name }}
     - name: Verify Pacts

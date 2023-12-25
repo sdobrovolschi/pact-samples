@@ -14,26 +14,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+#     https://docs.pact.io/implementation_guides/feature_toggles#checking-if-you-can-turn-on-a-feature-toggle-in-an-environment
     - name: Check Compatibility
       uses: addnab/docker-run-action@v3
       with:
         image: pactfoundation/pact-cli:0.56.0.6
-        options: -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
-# https://docs.pact.io/pact_broker/can_i_deploy
         run: |
           pact-broker can-i-deploy \
+          --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
+          --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
           --pacticipant consumer \
           --version ${{ inputs.version }} \
           --to-environment production
-#    - name: Record Release
-#      uses: addnab/docker-run-action@v3
-#      with:
-#        image: pactfoundation/pact-cli:0.56.0.6
-#        options: -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
-##  https://docs.pact.io/pact_broker/recording_deployments_and_releases#recording-releases
-#        run: |
-#          pact-broker record-release \
-#          --pacticipant consumer \
-#          --version ${{ github.sha }} \
-#          --environment production

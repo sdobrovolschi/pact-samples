@@ -1,8 +1,7 @@
 pactbroker:
-#  url: https://stastest.pactflow.io
-#  auth:
-#    token: 4CJtjKMtAFlAbj2sqawKpQ
   providerBranch: main
   consumerversionselectors:
+#   https://docs.pact.io/pact_broker/branches#we-never-use-feature-branches---do-i-need-to-set-the-branch-properties
     mainBranch: true
+    matchingBranch: true
     deployedOrReleased: true
