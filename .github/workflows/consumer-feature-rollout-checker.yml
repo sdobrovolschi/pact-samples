@@ -1,0 +1,39 @@
+name: consumer feature rollout checker
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Toggle version'
+        required: true
+        type: string
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check Compatibility
+      uses: addnab/docker-run-action@v3
+      with:
+        image: pactfoundation/pact-cli:0.56.0.6
+        options: -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
+# https://docs.pact.io/pact_broker/can_i_deploy
+        run: |
+          pact-broker can-i-deploy \
+          --pacticipant consumer \
+          --version ${{ inputs.version }} \
+          --to-environment production
+#    - name: Record Release
+#      uses: addnab/docker-run-action@v3
+#      with:
+#        image: pactfoundation/pact-cli:0.56.0.6
+#        options: -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
+##  https://docs.pact.io/pact_broker/recording_deployments_and_releases#recording-releases
+#        run: |
+#          pact-broker record-release \
+#          --pacticipant consumer \
+#          --version ${{ github.sha }} \
+#          --environment production

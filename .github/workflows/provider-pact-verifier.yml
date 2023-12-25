@@ -15,6 +15,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Test Provider
+# TODO verify only the changed pact
       run: |
         ./provider/mvnw clean test -f ./provider \
         -Dpactbroker.url=${{ vars.PACT_BROKER_BASE_URL }} \
