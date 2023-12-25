@@ -6,7 +6,7 @@ on:
     - main
     paths:
      - 'producer/**'
-     - 'producer.yml'
+     - '**/producer.yml'
 
 jobs:
   test:
@@ -20,5 +20,5 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Build Provider
+    - name: Test Provider
       run: ./provider/mvnw clean test -f ./provider -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ github.ref_name }} -Dpact.provider.version=${{ github.sha }}
