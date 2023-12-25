@@ -1,7 +1,7 @@
-pactbroker:
-  url: https://stastest.pactflow.io
-  auth:
-    token: 4CJtjKMtAFlAbj2sqawKpQ
+#pactbroker:
+#  url: https://stastest.pactflow.io
+#  auth:
+#    token: 4CJtjKMtAFlAbj2sqawKpQ
   providerBranch: main
   consumerversionselectors:
     mainBranch: true

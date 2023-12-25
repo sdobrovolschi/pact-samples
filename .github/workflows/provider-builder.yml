@@ -21,4 +21,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Test Provider
-      run: ./provider/mvnw clean test -f ./provider -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ github.ref_name }} -Dpact.provider.version=${{ github.sha }}
+      run: |
+        ./provider/mvnw clean test -f ./provider
+        -Dpactbroker.url=${{ env.PACT_BROKER_BASE_URL }}
+        -Dpactbroker.auth.token=${{ secrets.PACT_BROKER_TOKEN }}
+        -Dpact.verifier.publishResults=true
+        -Dpact.provider.branch=${{ github.ref_name }}
+        -Dpact.provider.version=${{ github.sha }}

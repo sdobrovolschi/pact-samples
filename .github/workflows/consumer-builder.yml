@@ -26,7 +26,7 @@ jobs:
       uses: addnab/docker-run-action@v3
       with:
         image: pactfoundation/pact-cli:0.56.0.6
-        options: -v ${{ github.workspace }}:/work -e PACT_BROKER_BASE_URL=https://stastest.pactflow.io/ -e PACT_BROKER_TOKEN=4CJtjKMtAFlAbj2sqawKpQ
+        options: -v ${{ github.workspace }}:/work -e PACT_BROKER_BASE_URL=${{ env.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
         run: pact-broker publish /work/consumer/build/pacts --consumer-app-version ${{ github.sha }} --branch ${{ github.ref_name }}
     - name: Verify Pacts
       uses: actions/github-script@v7
