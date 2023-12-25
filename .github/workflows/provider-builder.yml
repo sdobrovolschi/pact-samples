@@ -1,12 +1,12 @@
-name: CI Producer
+name: provider build
 
 on:
   push:
     branches:
     - main
     paths:
-     - '**/producer/**'
-     - '**/producer.yml'
+     - '**/provider/**'
+     - '**/provider-builder.yml'
 
 jobs:
   test:

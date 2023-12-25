@@ -1,4 +1,4 @@
-name: Provider Pact Verification
+name: provider pact verification
 
 on: workflow_dispatch
 
