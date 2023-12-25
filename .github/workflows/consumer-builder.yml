@@ -1,4 +1,4 @@
-name: consumer integration
+name: consumer build
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     - main
     paths:
      - '**/consumer/**'
-     - '**/consumer.yml'
+     - '**/consumer-builder.yml'
 
 jobs:
   test:
