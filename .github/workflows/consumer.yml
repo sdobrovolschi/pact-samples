@@ -1,4 +1,4 @@
-name: CI Consumer
+name: consumer integration
 
 on:
   push:
@@ -38,9 +38,3 @@ jobs:
             workflow_id: 'provider-pact-verifier.yml',
             ref: context.ref
           })
-    - name: Release Consumer
-      uses: addnab/docker-run-action@v3
-      with:
-        image: pactfoundation/pact-cli:0.56.0.6
-        options: -e PACT_BROKER_BASE_URL=https://stastest.pactflow.io/ -e PACT_BROKER_TOKEN=4CJtjKMtAFlAbj2sqawKpQ
-        run: pact-broker record-release --pacticipant consumer --version ${{ github.sha }} --environment production

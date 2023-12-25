@@ -1,0 +1,23 @@
+name: consumer deployment
+
+on: workflow_dispatch
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check Compatibility
+      uses: addnab/docker-run-action@v3
+      with:
+        image: pactfoundation/pact-cli:0.56.0.6
+        options: -e PACT_BROKER_BASE_URL=https://stastest.pactflow.io/ -e PACT_BROKER_TOKEN=4CJtjKMtAFlAbj2sqawKpQ
+        run: pact-broker can-i-deploy --pacticipant consumer --version ${{ github.sha }} --to-environment production
+    - name: Deploy
+      uses: addnab/docker-run-action@v3
+      with:
+        image: pactfoundation/pact-cli:0.56.0.6
+        options: -e PACT_BROKER_BASE_URL=https://stastest.pactflow.io/ -e PACT_BROKER_TOKEN=4CJtjKMtAFlAbj2sqawKpQ
+        run: pact-broker record-release --pacticipant consumer --version ${{ github.sha }} --environment production
