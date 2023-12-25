@@ -9,6 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: benjlevesque/short-sha@v2.2
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
@@ -23,4 +24,4 @@ jobs:
         -Dpactbroker.providerBranch=${{ github.ref_name }} \
         -Dpact.verifier.publishResults=true \
         -Dpact.provider.branch=${{ github.ref_name }} \
-        -Dpact.provider.version=${{ github.sha }}
+        -Dpact.provider.version=${{ env.SHA }}

@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @PactConsumerTest
 @PactTestFor(providerName = "provider")
 @Tags({
-        @Tag("feature.customer")
+        @Tag("feat.customer")
 })
 class ConsumerApplicationTests {
 

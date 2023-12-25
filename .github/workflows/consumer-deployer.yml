@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: benjlevesque/short-sha@v2.2
 #     https://docs.pact.io/pact_broker/can_i_deploy
     - name: Check Compatibility
       uses: addnab/docker-run-action@v3
@@ -18,7 +19,7 @@ jobs:
           --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
           --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
           --pacticipant consumer \
-          --version ${{ github.sha }} \
+          --version ${{ env.SHA }} \
           --to-environment production
     - name: Deploy
       run: echo 'Deployed'
@@ -32,5 +33,5 @@ jobs:
           --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
           --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
           --pacticipant consumer \
-          --version ${{ github.sha }} \
+          --version ${{ env.SHA }} \
           --environment production

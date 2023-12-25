@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: benjlevesque/short-sha@v2.2
     - name: Check Compatibility
       uses: addnab/docker-run-action@v3
       with:
@@ -17,7 +18,7 @@ jobs:
           --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
           --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
           --pacticipant provider \
-          --version ${{ github.sha }} \
+          --version ${{ env.SHA }} \
           --to-environment production
 #     https://docs.pact.io/pact_broker/recording_deployments_and_releases#recording-deployments
     - name: Record Deployment
@@ -29,5 +30,5 @@ jobs:
           --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
           --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
           --pacticipant provider \
-          --version ${{ github.sha }} \
+          --version ${{ env.SHA }} \
           --environment production
