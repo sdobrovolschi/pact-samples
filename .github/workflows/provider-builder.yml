@@ -22,9 +22,10 @@ jobs:
         distribution: 'temurin'
     - name: Test Provider
       run: |
-        ./provider/mvnw clean test -f ./provider
-        -Dpactbroker.url=${{ env.PACT_BROKER_BASE_URL }}
-        -Dpactbroker.auth.token=${{ secrets.PACT_BROKER_TOKEN }}
-        -Dpact.verifier.publishResults=true
-        -Dpact.provider.branch=${{ github.ref_name }}
+        ./provider/mvnw clean test -f ./provider \
+        -Dpactbroker.url=${{ vars.PACT_BROKER_BASE_URL }} \
+        -Dpactbroker.auth.token=${{ secrets.PACT_BROKER_TOKEN }} \
+        -Dpactbroker.providerBranch=${{ github.ref_name }} \
+        -Dpact.verifier.publishResults=true \
+        -Dpact.provider.branch=${{ github.ref_name }} \
         -Dpact.provider.version=${{ github.sha }}

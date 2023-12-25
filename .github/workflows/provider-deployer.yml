@@ -13,12 +13,12 @@ jobs:
 #      uses: addnab/docker-run-action@v3
 #      with:
 #        image: pactfoundation/pact-cli:0.56.0.6
-#        options: -e PACT_BROKER_BASE_URL=${{ env.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
+#        options: -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
 #        run: pact-broker can-i-deploy --pacticipant consumer --version ${{ github.sha }} --to-environment production
     - name: Deploy
       uses: addnab/docker-run-action@v3
       with:
         image: pactfoundation/pact-cli:0.56.0.6
-        options: -e PACT_BROKER_BASE_URL=${{ env.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
+        options: -e PACT_BROKER_BASE_URL=${{ vars.PACT_BROKER_BASE_URL }} -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }}
 # https://docs.pact.io/pact_broker/recording_deployments_and_releases#recording-deployments
         run: pact-broker record-deployment --pacticipant provider --version ${{ github.sha }} --environment production
