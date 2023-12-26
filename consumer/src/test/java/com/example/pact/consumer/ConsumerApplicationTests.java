@@ -21,9 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @PactConsumerTest
 @PactTestFor(providerName = "provider")
-@Tags({
-        @Tag("feat.customer")
-})
 class ConsumerApplicationTests {
 
     BasicJsonTester json = new BasicJsonTester(getClass());
@@ -55,6 +52,9 @@ class ConsumerApplicationTests {
 
     @Test
     @PactTestFor(pactMethod = "customer")
+    @Tags({
+            @Tag("feat.customer")
+    })
     void findingKnown() {
         var body = client.get().uri("/customers/1")
                 .retrieve()
