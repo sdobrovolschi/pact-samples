@@ -55,7 +55,7 @@ class ConsumerTest {
     }
 
     @Test
-    @Tag("feat.customer")
+    @Tag("base")
     @PactTestFor(pactMethod = "customer")
     fun testCustomer(mockServer: MockServer) = runTest {
         val customer = customersApi.find("1");

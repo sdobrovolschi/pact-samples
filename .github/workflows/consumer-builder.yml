@@ -33,8 +33,9 @@ jobs:
           --pacticipant consumer \
           --version ${{ env.SHA }} \
           --branch ${{ github.ref_name }}
-    - name: Test feat.customer
-      run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=feat.customer
+#     https://docs.pact.io/implementation_guides/feature_toggles#running-consumer-tests-and-publishing-pacts
+    - name: Test base
+      run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=base
     - name: Publish Pacts
       uses: addnab/docker-run-action@v3
       with:
@@ -44,7 +45,7 @@ jobs:
           pact-broker publish ${{ github.workspace }}/consumer/app/build/pacts \
           --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
           --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
-          --consumer-app-version ${{ env.SHA }}+feat.customer \
+          --consumer-app-version ${{ env.SHA }} \
           --branch ${{ github.ref_name }}
     - name: Verify Pacts
       uses: actions/github-script@v7
