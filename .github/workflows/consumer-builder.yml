@@ -5,7 +5,7 @@ on:
     branches:
     - main
     paths:
-     - '**/consumer/**'
+     - '**/app-consumer/**'
      - '**/consumer-builder.yml'
 
 jobs:
@@ -48,14 +48,14 @@ jobs:
 #          --consumer-app-version ${{ env.SHA }} \
 #          --branch ${{ github.ref_name }}
     - name: Test feat.customer
-      run: ./consumer/gradlew clean test -p ./consumer -DincludeTags=feat.customer
+      run: ./app-consumer/gradlew clean test -p ./app-consumer -DincludeTags=feat.customer
     - name: Publish Pacts
       uses: addnab/docker-run-action@v3
       with:
         image: pactfoundation/pact-cli:0.56.0.6
         options: -v ${{ github.workspace }}:${{ github.workspace }}
         run: |
-          pact-broker publish ${{ github.workspace }}/consumer/build/pacts \
+          pact-broker publish ${{ github.workspace }}/app-consumer/app/build/pacts \
           --broker-base-url ${{ vars.PACT_BROKER_BASE_URL }} \
           --broker-token ${{ secrets.PACT_BROKER_TOKEN }} \
           --consumer-app-version ${{ env.SHA }}+feat.customer \
