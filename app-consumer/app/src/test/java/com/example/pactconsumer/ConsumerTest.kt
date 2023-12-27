@@ -1,5 +1,6 @@
 package com.example.pactconsumer
 
+import android.annotation.SuppressLint
 import au.com.dius.pact.consumer.MockServer
 import au.com.dius.pact.consumer.dsl.LambdaDsl.newJsonBody
 import au.com.dius.pact.consumer.dsl.PactBuilder
@@ -7,71 +8,56 @@ import au.com.dius.pact.consumer.junit5.PactConsumerTest
 import au.com.dius.pact.consumer.junit5.PactTestFor
 import au.com.dius.pact.core.model.V4Pact
 import au.com.dius.pact.core.model.annotations.Pact
-import com.example.pactconsumer.data.model.CustomerResponse
-import com.example.pactconsumer.data.network.CustomerApiService
 import kotlinx.coroutines.test.runTest
+import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
 import okhttp3.OkHttpClient
-import org.junit.jupiter.api.Test
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import org.assertj.core.api.Assertions.assertThat
+import okhttp3.Request
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import java.nio.charset.StandardCharsets.UTF_8
 
 @PactConsumerTest
 @PactTestFor(providerName = "provider")
 class ConsumerTest {
 
-    lateinit var customersApi: CustomerApiService
+    private lateinit var okHttpClient: OkHttpClient
 
     @BeforeEach
-    fun setUp(mockServer: MockServer) {
-        val okHttpClient = OkHttpClient.Builder().build()
-        val retrofit = Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(mockServer.getUrl())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        customersApi = retrofit.create(CustomerApiService::class.java)
+    fun setUp() {
+        okHttpClient = OkHttpClient.Builder().build()
     }
 
     @Pact(consumer = "consumer")
     fun customer(builder: PactBuilder): V4Pact {
-        return builder
-            .given("a customer with id 1")
+        return builder.given("a customer with id 1")
             .expectsToReceiveHttpInteraction("a request for a customer") { httpBuilder ->
                 httpBuilder.withRequest { request ->
-                    request
-                        .method("GET")
-                        .path("/customers/1")
-                }
-                    .willRespondWith { response ->
-                        response
-                            .status(200)
-                            .header("Content-Type", "application/json")
+                    request.method("GET").path("/customers/1")
+                }.willRespondWith { response ->
+                        response.status(200).header("Content-Type", "application/json")
                             .body(newJsonBody { customer ->
-                                customer
-                                    .stringValue("customerId", "1")
+                                customer.stringValue("customerId", "1")
                                     .stringValue("name", "John Snow")
                                     .stringValue("email", "jsnow@test.com")
-                            }
-                                .build())
+                            }.build())
                     }
-            }
-            .toPact()
+            }.toPact()
     }
 
+    @SuppressLint("CheckResult")
     @Test
     @PactTestFor(pactMethod = "customer")
-    fun testCustomer() = runTest {
-        assertThat(customersApi.getCustomer("1"))
-            .usingRecursiveAssertion()
-            .isEqualTo(
-                CustomerResponse(
-                    customerId = "1",
-                    name = "John Snow",
-                    email = "jsnow@test.com"
-                )
-            )
+    fun testCustomer(mockServer: MockServer) = runTest {
+        val request = Request.Builder()
+            .method("GET", null)
+            .url("${mockServer.getUrl()}/customers/1")
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        val response = okHttpClient.newCall(request).execute()
+
+        assertThatJson(String(response.body()!!.bytes(), UTF_8))
+            .inPath("$")
+            .isEqualTo("{\n  \"customerId\": \"1\",\n  \"name\": \"John Snow\",\n  \"email\": \"jsnow@test.com\"\n}")
     }
 }
