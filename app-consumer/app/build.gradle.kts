@@ -67,6 +67,7 @@ dependencies {
     testImplementation ("org.junit.vintage:junit-vintage-engine:5.10.1")
     testImplementation ("org.assertj:assertj-core:3.24.2")
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:3.2.2")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
