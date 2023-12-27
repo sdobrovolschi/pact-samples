@@ -44,7 +44,6 @@ class ConsumerTest {
             }.toPact()
     }
 
-    @SuppressLint("CheckResult")
     @Test
     @PactTestFor(pactMethod = "customer")
     fun testCustomer(mockServer: MockServer) = runTest {
