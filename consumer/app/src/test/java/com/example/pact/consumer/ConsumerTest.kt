@@ -9,22 +9,32 @@ import au.com.dius.pact.consumer.junit5.PactTestFor
 import au.com.dius.pact.core.model.V4Pact
 import au.com.dius.pact.core.model.annotations.Pact
 import kotlinx.coroutines.test.runTest
-import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import org.assertj.core.api.Assertions.assertThat
 import java.nio.charset.StandardCharsets.UTF_8
 @PactConsumerTest
 @PactTestFor(providerName = "provider")
 class ConsumerTest {
 
-    private lateinit var okHttpClient: OkHttpClient
+    private lateinit var customersApi: CustomersApi
 
     @BeforeEach
-    fun setUp() {
-        okHttpClient = OkHttpClient.Builder().build()
+    fun setUp(mockServer: MockServer) {
+        val httpClient = OkHttpClient.Builder().build()
+
+        val retrofit = Retrofit.Builder()
+            .client(httpClient)
+            .baseUrl(mockServer.getUrl())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        customersApi = retrofit.create(CustomersApi::class.java)
     }
 
     @Pact(consumer = "consumer")
@@ -48,16 +58,16 @@ class ConsumerTest {
     @Tag("feat.customer")
     @PactTestFor(pactMethod = "customer")
     fun testCustomer(mockServer: MockServer) = runTest {
-        val request = Request.Builder()
-            .method("GET", null)
-            .url("${mockServer.getUrl()}/customers/1")
-            .addHeader("Content-Type", "application/json")
-            .build()
+        val customer = customersApi.find("1");
 
-        val response = okHttpClient.newCall(request).execute()
-
-        assertThatJson(String(response.body()!!.bytes(), UTF_8))
-            .inPath("$")
-            .isEqualTo("{\n  \"customerId\": \"1\",\n  \"name\": \"John Snow\",\n  \"email\": \"jsnow@test.com\"\n}")
+        assertThat(customer)
+            .usingRecursiveAssertion()
+            .isEqualTo(
+                Customer(
+                    customerId = "1",
+                    name = "John Snow",
+                    email = "jsnow@test.com"
+                )
+            )
     }
 }
