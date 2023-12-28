@@ -9,7 +9,6 @@ import au.com.dius.pact.consumer.junit5.PactTestFor
 import au.com.dius.pact.core.model.V4Pact
 import au.com.dius.pact.core.model.annotations.Pact
 import kotlinx.coroutines.test.runTest
-import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.junit.jupiter.api.BeforeEach
@@ -23,12 +22,11 @@ import java.nio.charset.StandardCharsets.UTF_8
 @PactTestFor(providerName = "provider")
 class ConsumerTest {
 
-    private lateinit var httpClient: OkHttpClient
     private lateinit var customersApi: CustomersApi
 
     @BeforeEach
     fun setUp(mockServer: MockServer) {
-        httpClient = OkHttpClient.Builder().build()
+        val httpClient = OkHttpClient.Builder().build()
 
         val retrofit = Retrofit.Builder()
             .client(httpClient)
@@ -53,7 +51,6 @@ class ConsumerTest {
                                         fullName.stringValue("firstName", "John")
                                             .stringValue("lastName", "Snow")
                                     }
-                                    .stringValue("name", "John Snow")
                                     .stringValue("email", "jsnow@test.com")
                             }.build())
                     }
@@ -63,7 +60,7 @@ class ConsumerTest {
     @Test
     @Tag("base")
     @PactTestFor(pactMethod = "customer")
-    fun testCustomer(mockServer: MockServer) = runTest {
+    fun testCustomer() = runTest {
         val customer = customersApi.find("1");
 
         assertThat(customer)
@@ -71,27 +68,12 @@ class ConsumerTest {
             .isEqualTo(
                 Customer(
                     customerId = "1",
-                    name = "John Snow",
+                    fullName = FullName(
+                        firstName = "John",
+                        lastName = "Snow"
+                    ),
                     email = "jsnow@test.com"
                 )
             )
-    }
-
-    @Test
-    @Tag("feat.customer-enrichment")
-    @PactTestFor(pactMethod = "customer")
-    fun customerInfoEnriched(mockServer: MockServer) = runTest {
-        val request = Request.Builder()
-            .method("GET", null)
-            .url("${mockServer.getUrl()}/customers/1")
-            .addHeader("Content-Type", "application/json")
-            .build()
-
-        val response = httpClient.newCall(request).execute()
-
-        assertThatJson(String(response.body()!!.bytes(), UTF_8))
-            .whenIgnoringPaths("$.name")
-            .inPath("$")
-            .isEqualTo("{\n  \"customerId\": \"1\",\n  \"fullName\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Snow\"\n  },\n  \"email\": \"jsnow@test.com\"\n}")
     }
 }

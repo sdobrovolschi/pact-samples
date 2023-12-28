@@ -3,6 +3,6 @@ package com.example.pact.consumer
 data class Customer(
 
     val customerId: String,
-    val name: String,
+    val fullName: FullName,
     val email: String
 )
