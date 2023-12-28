@@ -17,6 +17,6 @@ class CustomerStateHandler implements StateHandler {
     @State("a customer with id 1")
     void customer() {
         when(useCase.find("1"))
-                .thenReturn(Optional.of(new Customer("1", "John Snow", new FullName("John", "Snow"), "jsnow@test.com")));
+                .thenReturn(Optional.of(new Customer("1", new FullName("John", "Snow"), "jsnow@test.com")));
     }
 }
